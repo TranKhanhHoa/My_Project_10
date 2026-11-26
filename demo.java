@@ -71,8 +71,12 @@ class QuanLyTaiKhoan implements ChucNang {
     private List<TaiKhoan> a = new ArrayList<>();
 
     public QuanLyTaiKhoan() {
-        a.add(new TaiKhoan("TranCaoThai", new Date("09-11-2000"), 18));
-        a.add(new TaiKhoan("NguyenCaoPhong", new Date("03-20-2019"), 50));
+        a.add(new TaiKhoan("Tran Cao Thai", "09/11/2000", 38));
+        a.add(new TaiKhoan("Nguyen Cao Phong", "03/20/2019", 50));
+        a.add(new TaiKhoan("Dinh Cao Hoa", "11/02/2000", 24));
+        a.add(new TaiKhoan("Lo Thi Huong", "09/30/1920", 31));
+        a.add(new TaiKhoan("Tran Tuan Phong", "08/10/2002", 30));
+
     }
 
     @Override
@@ -91,8 +95,8 @@ class QuanLyTaiKhoan implements ChucNang {
 
     private int tim(String username) {
         int p = -1;
-        for (int i = 0; i <= a.size(); i++) {
-            if (a.get(i).getUsername().equals(username)) {
+        for (int i = 0; i < a.size(); i++) {
+            if (a.get(i).getUsername().contains(username)) {
                 return i;
             }
         }
@@ -101,12 +105,17 @@ class QuanLyTaiKhoan implements ChucNang {
 
     @Override
     public void xoa(String username) {
-
+        int p = tim(username);
+        if (p == -1) {
+            System.out.println("tim ko thay");
+        } else {
+            a.remove(a.get(p));
+        }
     }
 
     @Override
     public void xoaNhieu(int age) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
     }
 
     @Override
@@ -121,22 +130,36 @@ class QuanLyTaiKhoan implements ChucNang {
 
     @Override
     public void sapXepMa() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Collections.sort(a);
     }
 
     @Override
     public void sapXepDate() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Collections.sort(a, new Comparator<TaiKhoan>() {
+            @Override
+            public int compare(TaiKhoan o1, TaiKhoan o2) {
+                return o1.getDob().compareTo(o2.getDob());
+            }
+        });
     }
 
     @Override
     public void sapXepTen() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Collections.sort(a, new Comparator<TaiKhoan>() {
+            @Override
+            public int compare(TaiKhoan o1, TaiKhoan o2) {
+                String u1 = o1.getUsername();
+                String u2 = o2.getUsername();
+                String t1 = u1.substring(u1.lastIndexOf(" ")) + u1;
+                String t2 = u2.substring(u2.lastIndexOf(" ")) + u2;
+                return t1.compareTo(t2);
+            }
+        });
     }
 
 }
 
-class TaiKhoan {
+class TaiKhoan implements Comparable<TaiKhoan> {
 
     private String ma, username;
     private Date dob;
@@ -146,15 +169,14 @@ class TaiKhoan {
     public TaiKhoan() {
     }
 
-    public TaiKhoan(String username, Date dob, int age) {
+    public TaiKhoan(String username, String dob, int age) {
         this.ma = String.format("TK%03d", sMa++);
         this.username = username;
-        this.dob = dob;
+        this.dob = new Date(dob);
         this.age = age;
     }
 
     public void input(Scanner in) {
-        SimpleDateFormat spf = new SimpleDateFormat("dd-MM-yyyy");
         this.ma = String.format("TK%03d", sMa++);
         this.username = in.nextLine();
         this.dob = new Date(in.nextLine());
@@ -163,7 +185,7 @@ class TaiKhoan {
 
     @Override
     public String toString() {
-        SimpleDateFormat spf = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat spf = new SimpleDateFormat("dd/MM/yyyy");
         return this.ma + " " + this.username + " " + spf.format(dob) + " " + this.age;
     }
 
@@ -197,6 +219,11 @@ class TaiKhoan {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    @Override
+    public int compareTo(TaiKhoan o) {
+        return this.ma.compareTo(o.getMa());
     }
 
 }
